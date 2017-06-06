@@ -20,7 +20,7 @@ Why http access is good?
 
 Add the plugin to your cordova project:
 
-    cordova plugin add https://github.com/floatinghotpot/cordova-httpd.git
+    cordova plugin add https://github.com/fadeit/cordova-httpd.git
 
 Quick start, copy the demo files, and just build to play.
 
