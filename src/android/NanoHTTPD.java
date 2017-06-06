@@ -1092,6 +1092,7 @@ public class NanoHTTPD
 			res = new Response( HTTP_FORBIDDEN, MIME_PLAINTEXT, "FORBIDDEN: Reading file failed." );
 		}
 
+		res.addHeader( "Access-Control-Allow-Origin", "*" );//Accept CORS requests
 		res.addHeader( "Accept-Ranges", "bytes"); // Announce that the file server accepts partial content requestes
 		return res;
 	}
