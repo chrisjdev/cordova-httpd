@@ -1113,6 +1113,7 @@ public class NanoHTTPD
 						"gif		image/gif "+
 						"jpg		image/jpeg "+
 						"jpeg		image/jpeg "+
+                        "svg		image/svg+xml "+
 						"png		image/png "+
 						"mp3		audio/mpeg "+
 						"m3u		audio/mpeg-url " +
