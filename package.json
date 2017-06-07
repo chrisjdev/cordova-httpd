@@ -1,0 +1,22 @@
+{
+  "name": "cordova-httpd",
+  "version": "1.0.0",
+  "description": "Supported platform: * iOS * Android",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fadeit/cordova-httpd.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fadeit/cordova-httpd/issues"
+  },
+  "homepage": "https://github.com/fadeit/cordova-httpd#readme"
+}
