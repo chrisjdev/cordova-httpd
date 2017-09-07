@@ -6,7 +6,6 @@
 
 #import <Cordova/CDV.h>
 
-#import "DDLog.h"
 #import "DDTTYLogger.h"
 #import "HTTPServer.h"
 
@@ -139,7 +138,6 @@
         }
     }
 
-    [DDLog addLogger:[DDTTYLogger sharedInstance]];
     self.httpServer = [[HTTPServer alloc] init];
 
     // Tell the server to broadcast its presence via Bonjour.
