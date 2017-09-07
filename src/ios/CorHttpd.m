@@ -6,7 +6,6 @@
 
 #import <Cordova/CDV.h>
 
-#import "DDTTYLogger.h"
 #import "HTTPServer.h"
 
 @interface CorHttpd : CDVPlugin {
