@@ -44,6 +44,7 @@ xmlns:android="http://schemas.android.com/apk/res/android">
 
 <platform name="ios">
 
+    <dependency id="cordova-plugin-cocoalumberjack" version="~0.0.4" />
 <config-file parent="/*" target="config.xml">
 <feature name="CorHttpd">
 <param name="ios-package" value="CorHttpd" />
@@ -90,20 +91,6 @@ xmlns:android="http://schemas.android.com/apk/res/android">
 <source-file src="src/ios/CocoaHttpd/Categories/DDRange.m" />
 <header-file src="src/ios/CocoaHttpd/Vendor/CocoaAsyncSocket/GCDAsyncSocket.h" />
 <source-file src="src/ios/CocoaHttpd/Vendor/CocoaAsyncSocket/GCDAsyncSocket.m" />
-<source-file src="src/ios/CocoaHttpd/Vendor/CocoaLumberjack/DDAbstractDatabaseLogger.h" />
-<source-file src="src/ios/CocoaHttpd/Vendor/CocoaLumberjack/DDAbstractDatabaseLogger.m" />
-<header-file src="src/ios/CocoaHttpd/Vendor/CocoaLumberjack/DDFileLogger.h" />
-<source-file src="src/ios/CocoaHttpd/Vendor/CocoaLumberjack/DDFileLogger.m" />
-<header-file src="src/ios/CocoaHttpd/Vendor/CocoaLumberjack/DDASLLogger.h" />
-<source-file src="src/ios/CocoaHttpd/Vendor/CocoaLumberjack/DDASLLogger.m" />
-<header-file src="src/ios/CocoaHttpd/Vendor/CocoaLumberjack/DDTTYLogger.h" />
-<source-file src="src/ios/CocoaHttpd/Vendor/CocoaLumberjack/DDTTYLogger.m" />
-<header-file src="src/ios/CocoaHttpd/Vendor/CocoaLumberjack/DDLog.h" />
-<source-file src="src/ios/CocoaHttpd/Vendor/CocoaLumberjack/DDLog.m" />
-<header-file src="src/ios/CocoaHttpd/Vendor/CocoaLumberjack/Extensions/ContextFilterLogFormatter.h" />
-<source-file src="src/ios/CocoaHttpd/Vendor/CocoaLumberjack/Extensions/ContextFilterLogFormatter.m" />
-<header-file src="src/ios/CocoaHttpd/Vendor/CocoaLumberjack/Extensions/DispatchQueueLogFormatter.h" />
-<source-file src="src/ios/CocoaHttpd/Vendor/CocoaLumberjack/Extensions/DispatchQueueLogFormatter.m" />
 
 <framework src="CFNetwork.framework" />
 <framework src="Foundation.framework" />
@@ -158,20 +145,6 @@ xmlns:android="http://schemas.android.com/apk/res/android">
         <source-file src="src/ios/CocoaHttpd/Categories/DDRange.m" />
         <header-file src="src/ios/CocoaHttpd/Vendor/CocoaAsyncSocket/GCDAsyncSocket.h" />
         <source-file src="src/ios/CocoaHttpd/Vendor/CocoaAsyncSocket/GCDAsyncSocket.m" />
-        <source-file src="src/ios/CocoaHttpd/Vendor/CocoaLumberjack/DDAbstractDatabaseLogger.h" />
-        <source-file src="src/ios/CocoaHttpd/Vendor/CocoaLumberjack/DDAbstractDatabaseLogger.m" />
-        <header-file src="src/ios/CocoaHttpd/Vendor/CocoaLumberjack/DDFileLogger.h" />
-        <source-file src="src/ios/CocoaHttpd/Vendor/CocoaLumberjack/DDFileLogger.m" />
-        <header-file src="src/ios/CocoaHttpd/Vendor/CocoaLumberjack/DDASLLogger.h" />
-        <source-file src="src/ios/CocoaHttpd/Vendor/CocoaLumberjack/DDASLLogger.m" />
-        <header-file src="src/ios/CocoaHttpd/Vendor/CocoaLumberjack/DDTTYLogger.h" />
-        <source-file src="src/ios/CocoaHttpd/Vendor/CocoaLumberjack/DDTTYLogger.m" />
-        <header-file src="src/ios/CocoaHttpd/Vendor/CocoaLumberjack/DDLog.h" />
-        <source-file src="src/ios/CocoaHttpd/Vendor/CocoaLumberjack/DDLog.m" />
-        <header-file src="src/ios/CocoaHttpd/Vendor/CocoaLumberjack/Extensions/ContextFilterLogFormatter.h" />
-        <source-file src="src/ios/CocoaHttpd/Vendor/CocoaLumberjack/Extensions/ContextFilterLogFormatter.m" />
-        <header-file src="src/ios/CocoaHttpd/Vendor/CocoaLumberjack/Extensions/DispatchQueueLogFormatter.h" />
-        <source-file src="src/ios/CocoaHttpd/Vendor/CocoaLumberjack/Extensions/DispatchQueueLogFormatter.m" />
 
         <framework src="CFNetwork.framework" />
         <framework src="Foundation.framework" />
