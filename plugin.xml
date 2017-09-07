@@ -44,7 +44,6 @@ xmlns:android="http://schemas.android.com/apk/res/android">
 
 <platform name="ios">
 
-    <dependency id="cordova-plugin-cocoalumberjack" version="~0.0.4" />
 <config-file parent="/*" target="config.xml">
 <feature name="CorHttpd">
 <param name="ios-package" value="CorHttpd" />
