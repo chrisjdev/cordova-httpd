@@ -1206,6 +1206,9 @@ static NSMutableArray *recentNonces;
 		[response setHeaderField:@"Last-Modified" value:[self dateAsString:[httpResponse lastModified]]];
 	}
 
+	[response setHeaderField:@"Access-Control-Allow-Origin" value:@"*"];
+
+
 	BOOL isZeroLengthResponse = !isChunked && (contentLength == 0);
 
 	// If they issue a 'HEAD' command, we don't have to include the file
