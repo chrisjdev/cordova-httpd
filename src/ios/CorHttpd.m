@@ -7,6 +7,7 @@
 #import <Cordova/CDV.h>
 
 #import "HTTPServer.h"
+#import "CordovaHTTPConnection.h"
 
 @interface CorHttpd : CDVPlugin {
     // Member variables go here.
@@ -139,6 +140,8 @@
 
     self.httpServer = [[HTTPServer alloc] init];
 
+    [self.httpServer setConnectionClass:[CordovaHTTPConnection class]];
+
     // Tell the server to broadcast its presence via Bonjour.
     // This allows browsers such as Safari to automatically discover our service.
     //[self.httpServer setType:@"_http._tcp."];
@@ -163,20 +166,20 @@
     NSLog(@"Setting document root: %@", self.localPath);
     [self.httpServer setDocumentRoot:self.localPath];
 
-	NSError *error;
-	if([self.httpServer start:&error]) {
+    NSError *error;
+    if([self.httpServer start:&error]) {
         int listenPort = [self.httpServer listeningPort];
         NSString* ip = self.localhost_only ? IP_LOCALHOST : [self getIPAddress:YES];
-		NSLog(@"Started httpd on port %d", listenPort);
+        NSLog(@"Started httpd on port %d", listenPort);
         self.url = [NSString stringWithFormat:@"http://%@:%d/", ip, listenPort];
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:self.url];
 
-	} else {
-		NSLog(@"Error starting httpd: %@", error);
+    } else {
+        NSLog(@"Error starting httpd: %@", error);
 
         NSString* errmsg = [error description];
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:errmsg];
-	}
+    }
 
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
