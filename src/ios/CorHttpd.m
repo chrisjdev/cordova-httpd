@@ -6,7 +6,7 @@
 
 #import <Cordova/CDV.h>
 
-#import "HTTPServer.h"
+#import "CordovaHTTPServer.h"
 #import "CordovaHTTPConnection.h"
 
 @interface CorHttpd : CDVPlugin {
@@ -14,13 +14,15 @@
 
 }
 
-@property(nonatomic, retain) HTTPServer *httpServer;
+@property(nonatomic, retain) CordovaHTTPServer *httpServer;
 @property(nonatomic, retain) NSString *localPath;
 @property(nonatomic, retain) NSString *url;
+@property(nonatomic, retain) NSString *errorPath;
 
 @property (nonatomic, retain) NSString* www_root;
 @property (assign) int port;
 @property (assign) BOOL localhost_only;
+@property (nonatomic, retain) NSString* error_page;
 
 - (void)startServer:(CDVInvokedUrlCommand*)command;
 - (void)stopServer:(CDVInvokedUrlCommand*)command;
@@ -42,6 +44,7 @@
 #define OPT_WWW_ROOT        @"www_root"
 #define OPT_PORT            @"port"
 #define OPT_LOCALHOST_ONLY  @"localhost_only"
+#define OPT_ERROR_PAGE      @"error_page"
 
 #define IP_LOCALHOST        @"127.0.0.1"
 #define IP_ANY              @"0.0.0.0"
@@ -108,11 +111,13 @@
 {
     self.httpServer = nil;
     self.localPath = @"";
+    self.errorPath = @"";
     self.url = @"";
 
     self.www_root = @"";
     self.port = 8888;
     self.localhost_only = false;
+    self.error_page = @"";
 }
 
 - (void)startServer:(CDVInvokedUrlCommand*)command
@@ -130,6 +135,9 @@
     str = [options valueForKey:OPT_LOCALHOST_ONLY];
     if(str) self.localhost_only = [str boolValue];
 
+    str = [options valueForKey:OPT_ERROR_PAGE];
+    if(str) self.error_page = str;
+
     if(self.httpServer != nil) {
         if([self.httpServer isRunning]) {
             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"server is already up"];
@@ -138,7 +146,7 @@
         }
     }
 
-    self.httpServer = [[HTTPServer alloc] init];
+    self.httpServer = [[CordovaHTTPServer alloc] init];
 
     [self.httpServer setConnectionClass:[CordovaHTTPConnection class]];
 
@@ -165,6 +173,16 @@
     }
     NSLog(@"Setting document root: %@", self.localPath);
     [self.httpServer setDocumentRoot:self.localPath];
+
+    const char * errorRoot = [self.error_page UTF8String];
+    if(*errorRoot == '/') {
+        self.errorPath = self.error_page;
+    } else {
+        NSString* basePath = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"www"];
+        self.errorPath = [NSString stringWithFormat:@"%@/%@", basePath, self.error_page];
+    }
+    NSLog(@"Setting default error page: %@", self.errorPath);
+    [self.httpServer setErrorPage:self.errorPath];
 
     NSError *error;
     if([self.httpServer start:&error]) {

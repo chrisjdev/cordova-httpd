@@ -6,6 +6,7 @@
 // Other flags: trace
 static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
 
+#define NULL_FD  -1
 
 @implementation CordovaHTTPConnection
 
@@ -23,7 +24,13 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
     
     if ([response statusCode] == 404)
     {
-        NSString *msg = @"<html><body>Error 404 - Not Found</body></html>";
+        NSError *error;
+        NSString *msg = [NSString stringWithContentsOfFile:[(CordovaHTTPConfig *)config errorPage] encoding:NSUTF8StringEncoding error:&error];
+        
+        if (msg == nil) {
+            msg = @"<html><body>Unexpected error has occured. Click <a onclick=\"window.history.go(-1);\">here</a> to go back</body></html>";
+        }
+        
         NSData *msgData = [msg dataUsingEncoding:NSUTF8StringEncoding];
         
         [response setBody:msgData];
@@ -33,6 +40,28 @@ static const int httpLogLevel = HTTP_LOG_LEVEL_WARN; // | HTTP_LOG_FLAG_TRACE;
     }
     
     return [super preprocessErrorResponse:response];
+}
+
+@end
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+@implementation CordovaHTTPConfig
+
+@synthesize errorPage;
+
+
+- (id)initWithServer:(HTTPServer *)aServer documentRoot:(NSString *)aDocumentRoot queue:(dispatch_queue_t)q errorPage:(NSString *)aErrorPage;
+{
+    if ((self = [super initWithServer:aServer documentRoot:aDocumentRoot queue:q])) 
+    {
+        errorPage = aErrorPage;
+    }
+    
+    return self;
 }
 
 @end
