@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <plugin 
-id="com.rjfun.cordova.httpd" 
+id="cordova-plugin-httpd" 
 version="0.9.2" 
 xmlns="http://apache.org/cordova/ns/plugins/1.0" 
 xmlns:android="http://schemas.android.com/apk/res/android">
@@ -51,6 +51,10 @@ xmlns:android="http://schemas.android.com/apk/res/android">
 </config-file>
 
 <source-file src="src/ios/CorHttpd.m" />
+<source-file src="src/ios/CordovaHTTPConnection.h" />
+<source-file src="src/ios/CordovaHTTPConnection.m" />
+<source-file src="src/ios/CordovaHTTPServer.h" />
+<source-file src="src/ios/CordovaHTTPServer.m" />
 
 <header-file src="src/ios/CocoaHttpd/HTTPLogging.h" />
 <header-file src="src/ios/CocoaHttpd/HTTPServer.h" />
