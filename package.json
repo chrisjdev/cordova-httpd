@@ -2,6 +2,13 @@
     "name": "cordova-plugin-httpd",
     "version": "1.0.0",
     "description": "Supported platform: * iOS * Android",
+    "cordova": {
+        "id": "cordova-plugin-httpd",
+        "platforms": [
+            "android",
+            "ios"
+        ]
+    },
     "main": "index.js",
     "directories": {
         "test": "test"
