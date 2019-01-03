@@ -27,52 +27,55 @@ public class CorHttpd extends CordovaPlugin {
 
     /** Common tag used for logging statements. */
     private static final String LOGTAG = "CorHttpd";
-    
+
     /** Cordova Actions. */
     private static final String ACTION_START_SERVER = "startServer";
     private static final String ACTION_STOP_SERVER = "stopServer";
     private static final String ACTION_GET_URL = "getURL";
     private static final String ACTION_GET_LOCAL_PATH = "getLocalPath";
-    
+
     private static final String OPT_WWW_ROOT = "www_root";
     private static final String OPT_PORT = "port";
+    private static final String OPT_ERROR_PAGE = "error_page";
     private static final String OPT_LOCALHOST_ONLY = "localhost_only";
 
     private String www_root = "";
-	private int port = 8888;
-	private boolean localhost_only = false;
+    private int port = 8888;
+    private String error_page = "";
+    private boolean localhost_only = false;
 
-	private String localPath = "";
-	private WebServer server = null;
-	private String	url = "";
+    private String localPath = "";
+    private WebServer server = null;
+    private String errorPath = "";
+    private String	url = "";
 
     @Override
     public boolean execute(String action, JSONArray inputs, CallbackContext callbackContext) throws JSONException {
         PluginResult result = null;
         if (ACTION_START_SERVER.equals(action)) {
             result = startServer(inputs, callbackContext);
-            
+
         } else if (ACTION_STOP_SERVER.equals(action)) {
             result = stopServer(inputs, callbackContext);
-            
+
         } else if (ACTION_GET_URL.equals(action)) {
             result = getURL(inputs, callbackContext);
-            
+
         } else if (ACTION_GET_LOCAL_PATH.equals(action)) {
             result = getLocalPath(inputs, callbackContext);
-            
+
         } else {
             Log.d(LOGTAG, String.format("Invalid action passed: %s", action));
             result = new PluginResult(Status.INVALID_ACTION);
         }
-        
+
         if(result != null) callbackContext.sendPluginResult( result );
-        
+
         return true;
     }
-    
+
     private String __getLocalIpAddress() {
-    	try {
+        try {
             for (Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces(); en.hasMoreElements();) {
                 NetworkInterface intf = en.nextElement();
                 for (Enumeration<InetAddress> enumIpAddr = intf.getInetAddresses(); enumIpAddr.hasMoreElements();) {
@@ -80,119 +83,120 @@ public class CorHttpd extends CordovaPlugin {
                     if (! inetAddress.isLoopbackAddress()) {
                         if (inetAddress instanceof Inet4Address) {
                             String ip = inetAddress.getHostAddress();
-                    		Log.w(LOGTAG, "local IP: "+ ip);
-                    		return ip;
-                    	}
+                            Log.w(LOGTAG, "local IP: "+ ip);
+                            return ip;
+                        }
                     }
                 }
             }
         } catch (SocketException ex) {
             Log.e(LOGTAG, ex.toString());
         }
-    	
-		return "127.0.0.1";
+
+        return "127.0.0.1";
     }
 
     private PluginResult startServer(JSONArray inputs, CallbackContext callbackContext) {
-		Log.w(LOGTAG, "startServer");
+        Log.w(LOGTAG, "startServer");
 
         JSONObject options = inputs.optJSONObject(0);
         if(options == null) return null;
-        
+
         www_root = options.optString(OPT_WWW_ROOT);
         port = options.optInt(OPT_PORT, 8888);
         localhost_only = options.optBoolean(OPT_LOCALHOST_ONLY, false);
-        
+        error_page = options.optString(OPT_ERROR_PAGE);
+
         if(www_root.startsWith("/")) {
-    		//localPath = Environment.getExternalStorageDirectory().getAbsolutePath();
-        	localPath = www_root;
+            //localPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+            localPath = www_root;
         } else {
-        	//localPath = "file:///android_asset/www";
-        	localPath = "www";
-        	if(www_root.length()>0) {
-        		localPath += "/";
-        		localPath += www_root;
-        	}
+            //localPath = "file:///android_asset/www";
+            localPath = "www";
+            if(www_root.length()>0) {
+                localPath += "/";
+                localPath += www_root;
+            }
         }
 
         final CallbackContext delayCallback = callbackContext;
         cordova.getActivity().runOnUiThread(new Runnable(){
-			@Override
+            @Override
             public void run() {
-				String errmsg = __startServer();
-				if (errmsg.length() > 0) {
-					delayCallback.error( errmsg );
-				} else {
+                String errmsg = __startServer();
+                if (errmsg.length() > 0) {
+                    delayCallback.error( errmsg );
+                } else {
                     if (localhost_only) {
                         url = "http://127.0.0.1:" + port;
                     } else {
                         url = "http://" + __getLocalIpAddress() + ":" + port;
                     }
-	                delayCallback.success( url );
-				}
+                    delayCallback.success( url );
+                }
             }
         });
-        
+
         return null;
     }
-    
+
     private String __startServer() {
-    	String errmsg = "";
-    	try {
-    		AndroidFile f = new AndroidFile(localPath);
-    		
-	        Context ctx = cordova.getActivity().getApplicationContext();
-			AssetManager am = ctx.getResources().getAssets();
-    		f.setAssetManager( am );
-    		
-    		if(localhost_only) {
-    			InetSocketAddress localAddr = new InetSocketAddress(InetAddress.getByAddress(new byte[]{127,0,0,1}), port);
-    			server = new WebServer(localAddr, f);
-    		} else {
-    			server = new WebServer(port, f);
-    		}
-		} catch (IOException e) {
-			errmsg = String.format("IO Exception: %s", e.getMessage());
-			Log.w(LOGTAG, errmsg);
-		}
-    	return errmsg;
+        String errmsg = "";
+        try {
+            AndroidFile f = new AndroidFile(localPath);
+
+            Context ctx = cordova.getActivity().getApplicationContext();
+            AssetManager am = ctx.getResources().getAssets();
+            f.setAssetManager( am );
+
+            if(localhost_only) {
+                InetSocketAddress localAddr = new InetSocketAddress(InetAddress.getByAddress(new byte[]{127,0,0,1}), port);
+                server = new WebServer(localAddr, f, error_page);
+            } else {
+                server = new WebServer(port, f, error_page);
+            }
+        } catch (IOException e) {
+            errmsg = String.format("IO Exception: %s", e.getMessage());
+            Log.w(LOGTAG, errmsg);
+        }
+        return errmsg;
     }
 
     private void __stopServer() {
-		if (server != null) {
-			server.stop();
-			server = null;
-		}
+        if (server != null) {
+            server.stop();
+            server = null;
+        }
     }
-    
-   private PluginResult getURL(JSONArray inputs, CallbackContext callbackContext) {
-		Log.w(LOGTAG, "getURL");
-		
-    	callbackContext.success( this.url );
+
+    private PluginResult getURL(JSONArray inputs, CallbackContext callbackContext) {
+        Log.w(LOGTAG, "getURL");
+
+        callbackContext.success( this.url );
         return null;
     }
 
     private PluginResult getLocalPath(JSONArray inputs, CallbackContext callbackContext) {
-		Log.w(LOGTAG, "getLocalPath");
-		
-    	callbackContext.success( this.localPath );
+        Log.w(LOGTAG, "getLocalPath");
+
+        callbackContext.success( this.localPath );
         return null;
     }
 
     private PluginResult stopServer(JSONArray inputs, CallbackContext callbackContext) {
-		Log.w(LOGTAG, "stopServer");
-		
+        Log.w(LOGTAG, "stopServer");
+
         final CallbackContext delayCallback = callbackContext;
         cordova.getActivity().runOnUiThread(new Runnable(){
-			@Override
+            @Override
             public void run() {
-				__stopServer();
-				url = "";
-				localPath = "";
+                __stopServer();
+                url = "";
+                localPath = "";
                 delayCallback.success();
             }
         });
-        
+
         return null;
     }
 
@@ -202,7 +206,7 @@ public class CorHttpd extends CordovaPlugin {
      * @param multitasking		Flag indicating if multitasking is turned on for app
      */
     public void onPause(boolean multitasking) {
-    	//if(! multitasking) __stopServer();
+        //if(! multitasking) __stopServer();
     }
 
     /**
@@ -211,13 +215,13 @@ public class CorHttpd extends CordovaPlugin {
      * @param multitasking		Flag indicating if multitasking is turned on for app
      */
     public void onResume(boolean multitasking) {
-    	//if(! multitasking) __startServer();
+        //if(! multitasking) __startServer();
     }
 
     /**
      * The final call you receive before your activity is destroyed.
      */
     public void onDestroy() {
-    	__stopServer();
+        __stopServer();
     }
 }
