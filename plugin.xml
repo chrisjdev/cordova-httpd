@@ -38,6 +38,7 @@
     </platform>
 
     <platform name="ios">
+        <dependency id="cordova-plugin-chrome-apps-iossocketscommon@1" />
 
         <config-file parent="/*" target="config.xml">
             <feature name="CorHttpd">
@@ -87,8 +88,6 @@
         <source-file src="src/ios/CocoaHttpd/Categories/DDNumber.m" />
         <header-file src="src/ios/CocoaHttpd/Categories/DDRange.h" />
         <source-file src="src/ios/CocoaHttpd/Categories/DDRange.m" />
-        <header-file src="src/ios/CocoaHttpd/Vendor/CocoaAsyncSocket/GCDAsyncSocket.h" />
-        <source-file src="src/ios/CocoaHttpd/Vendor/CocoaAsyncSocket/GCDAsyncSocket.m" />
 
         <framework src="CFNetwork.framework" />
         <framework src="Foundation.framework" />
